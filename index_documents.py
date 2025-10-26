@@ -1,4 +1,15 @@
-# Document processing for RAG system
+"""
+Document indexing for the RAG system.
+
+Takes PDF documents and prepares them for semantic search by:
+- Loading and extracting text from PDFs
+- Splitting into 600-character chunks with 60-char overlap
+- Generating embeddings using Google Gemini API
+- Storing everything in PostgreSQL
+
+The chunking size was chosen to work well with recipe documents while keeping
+context intact. Batch processing helps avoid hitting API rate limits.
+"""
 
 import os
 from dotenv import load_dotenv
@@ -78,17 +89,18 @@ def store_chunks(chunks, embeddings_list, source_file):
     try:
         with engine.connect() as conn:
             for i, (chunk, embedding) in enumerate(zip(chunks, embeddings_list)):
-                # Insert query uses CURRENT_TIMESTAMP for created_at (evaluated by PostgreSQL)
+                # CURRENT_TIMESTAMP is a PostgreSQL function that automatically sets the timestamp
+                # No need to pass created_at as a parameter - the database handles it
                 insert_query = text("""
-                    INSERT INTO document_chunks (chunk_text, embedding, filename, split_strategy, created_at)
-                    VALUES (:chunk_text, :embedding, :filename, :split_strategy, CURRENT_TIMESTAMP)
+                    INSERT INTO document_chunks (chunk_content, embedding, source_file, chunking_method, created_at)
+                    VALUES (:chunk_content, :embedding, :source_file, :chunking_method, CURRENT_TIMESTAMP)
                 """)
 
                 conn.execute(insert_query, {
-                    "chunk_text": chunk.page_content,
+                    "chunk_content": chunk.page_content,
                     "embedding": embedding,
-                    "filename": source_file,
-                    "split_strategy": "fixed_size_600_60"
+                    "source_file": source_file,
+                    "chunking_method": "fixed_size_600_60"
                 })
 
             conn.commit()

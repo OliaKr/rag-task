@@ -73,8 +73,3 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
-# Temporary testing files
-test_chunking.py
-test_db.py
-check_db_simple.py
