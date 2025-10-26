@@ -1,5 +1,5 @@
 """
-Document indexing for the RAG system.
+Document indexing for the RAG pipeline.
 
 Takes PDF documents and prepares them for semantic search by:
 - Loading and extracting text from PDFs
@@ -111,7 +111,6 @@ def store_chunks(chunks, embeddings_list, source_file):
 
 
 def process_document(file_path):
-    """Main workflow to process a PDF document for the RAG system."""
     print(f"Processing document: {file_path}")
 
     documents = load_pdf(file_path)
