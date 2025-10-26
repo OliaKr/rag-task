@@ -103,6 +103,7 @@ You can ask questions interactively or press Enter to use the default example.
 
 The PostgreSQL table stores document chunks and their embeddings.
 
+```bash
 CREATE TABLE IF NOT EXISTS document_chunks (
 id SERIAL PRIMARY KEY,
 chunk_content TEXT NOT NULL,
@@ -111,6 +112,7 @@ source_file TEXT NOT NULL,
 chunking_method TEXT NOT NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+```
 
 The field names in my table are functionally identical to those in the assignment,
 with only minor naming adjustments for consistency:
